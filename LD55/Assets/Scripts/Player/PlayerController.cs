@@ -12,11 +12,13 @@ public class PlayerController : MonoBehaviour
 	[SerializeField] float speed = 10f;
 	[SerializeField] float turnSpeed = 500f;
 	[SerializeField] float dashForce = 100f;
+	[SerializeField] float attackDamage = 10f;
 	bool isControllable = true;
 	Vector3 movement;
 	
 	Rigidbody rb;
 	Animator anim;
+	AttackController attackController;
 	
 	IInteractable interactable;
 	public bool canInteract = false;
@@ -34,6 +36,10 @@ public class PlayerController : MonoBehaviour
 	{
 		rb = GetComponent<Rigidbody>();
 		anim = GetComponentInChildren<Animator>();
+		attackController = GetComponentInChildren<AttackController>();
+		attackController.SetDamage(attackDamage);
+		// attackController.gameObject.SetActive(false);
+		
 		movement = Vector3.zero;
 		
 		interactable = null;
@@ -106,7 +112,8 @@ public class PlayerController : MonoBehaviour
 		bool canAttack = unlockedAbilities[Abilities.Slash];
 		if (isControllable && canAttack)
 		{
-			anim.SetTrigger("Attack");
+			// attackController.gameObject.SetActive(true);
+			attackController.Activate();
 		}
 	}
 	
