@@ -5,22 +5,14 @@ using DG.Tweening;
 
 public class Altar : MonoBehaviour, IInteractable
 {
-	int numKeysPlaced = 0;
-	int numKeysNeeded = 3;
-	[SerializeField] Transform[] keyPlacementLocations;
+	public Demon demonPrefab;
+	[SerializeField] Transform spawnPoint;
 	
-	bool hasSummoned = false;
-	public Demon demon;
-	Vector3 demonHiddenPosition;
-	Vector3 demonActivePosition;
+	Inventory inventory;
 	
 	void Start()
 	{
-		demon = GetComponentInChildren<Demon>();
-		demonActivePosition = demon.transform.position;
-		demonHiddenPosition = demon.transform.position - Vector3.up * 5f;
-		demon.gameObject.SetActive(false);
-		// demon.transform.position = demonHiddenPosition;
+		inventory = Inventory.Instance;
 	}
 
 	void Update()
@@ -30,43 +22,19 @@ public class Altar : MonoBehaviour, IInteractable
 	
 	public void OnInteract()
 	{
-		if (hasSummoned)
+		if (inventory.SoulCount < 10)
 		{
-			// Interact with demon
-		}
-		else
-		{
-			List<AltarKey> keys = Inventory.Instance.GetStoredKeys();
-			// Check Inventory for needed keys
-			if (keys.Count > 0)
-			{
-				foreach(AltarKey key in keys)
-				{
-					key.transform.position = keyPlacementLocations[numKeysPlaced].position;
-					key.transform.SetParent(this.transform);
-					key.gameObject.SetActive(true);
-					numKeysPlaced++;
-				}
-				
-				Inventory.Instance.ClearKeys();
-			}
-			
-			if (numKeysPlaced == numKeysNeeded)
-			{
-				hasSummoned = true;
-				// summoning animation
-				
-				// on competion of animation, activate demon object and bring into center
-				Invoke("SummonDemon", 1f);
-			}
+			Debug.Log("Not enough souls");
+			return;
 		}
 		
+		EventManager.Inventory.OnSpendSouls(10);
+		SummonDemon(demonPrefab);
 	}
 	
-	public void SummonDemon()
+	public void SummonDemon(Demon demonPrefab)
 	{
-		demon.gameObject.SetActive(true);
-		demon.Summon();
-		// demon.transform.DOMoveY(demonActivePosition.y, 2f).SetEase(Ease.OutBack);
+		Demon d = Instantiate(demonPrefab, spawnPoint.position, Quaternion.identity);
+		d.Summon();
 	}
 }

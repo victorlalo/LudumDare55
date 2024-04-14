@@ -5,10 +5,12 @@ using UnityEngine;
 public class AttackController : MonoBehaviour
 {
 	float attackDamage = 10f;
-	ParticleSystem attackParticles;
-	Collider attackCollider;
+	// ParticleSystem attackParticles;
+	// Collider attackCollider;
+	[SerializeField] Projectile projectilePrefab;
 	
 	bool canAttack = true;
+	bool buttonDown = false;
 	
 	float cooldownTime = .75f;
 	SimpleTimer attackTimer;
@@ -21,9 +23,9 @@ public class AttackController : MonoBehaviour
 	
 	void Start()
 	{
-		attackCollider = GetComponent<Collider>();
-		attackParticles = GetComponent<ParticleSystem>();
-		attackParticles.Clear();
+		// attackCollider = GetComponent<Collider>();
+		// attackParticles = GetComponent<ParticleSystem>();
+		// attackParticles.Clear();
 
 	}
 	
@@ -40,6 +42,15 @@ public class AttackController : MonoBehaviour
 	void Update()
 	{
 		attackTimer.Tick();
+		if (canAttack && buttonDown)
+		{
+			Activate();
+		}
+	}
+	
+	public void SetButtonDown(bool b)
+	{
+		buttonDown = b;
 	}
 	
 	public void SetDamage(float damage)
@@ -59,21 +70,28 @@ public class AttackController : MonoBehaviour
 			return;
 		}
 		
+		Projectile p = Instantiate(projectilePrefab, transform.position, transform.rotation);
+		p.Initialize(attackDamage);
+		p.Activate();
+		
 		canAttack = false;
 		attackTimer.Reset();
 		
-		attackParticles.Play();
-		attackCollider.enabled = true;
+		// slash attack
 		
-		Invoke("Deactivate", 0.5f);
+		
+		// attackParticles.Play();
+		// attackCollider.enabled = true;
+		
+		// Invoke("Deactivate", 0.5f);
 	}
 	
-	public void Deactivate()
-	{
-		attackParticles.Stop();
-		attackCollider.enabled = false;
-		// gameObject.SetActive(false);
-	}
+	// public void Deactivate()
+	// {
+	// 	attackParticles.Stop();
+	// 	attackCollider.enabled = false;
+	// 	// gameObject.SetActive(false);
+	// }
 	
 	void SetCanAttack()
 	{

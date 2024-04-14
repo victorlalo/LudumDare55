@@ -3,20 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Demon : MonoBehaviour
-{
-	// Dialogue dialogue;
-	Vector3 hiddenPosition;
-	Vector3 activePosition;
-	bool isSummoned;
-	
-	[SerializeField] Abilities abilityGifted;
-	
+{	
 	Animator anim;
 	
-	void Start()
+	void Awake()
 	{
 		anim = GetComponentInChildren<Animator>();
-		anim.SetTrigger("Hidden");
+		// anim.SetTrigger("Hidden");
 	}
 
 	void Update()
@@ -27,9 +20,5 @@ public class Demon : MonoBehaviour
 	public void Summon()
 	{
 		anim.SetTrigger("Summon");
-		isSummoned = true;
-		
-		// TODO: Move unlocking power to happen once dialogue is finished
-		EventManager.Ability.OnAbilityUnlock(abilityGifted);
 	}
 }
